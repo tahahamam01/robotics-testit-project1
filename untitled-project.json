@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "id": "proj-61s2n1o",
+  "name": "Untitled Project",
+  "circuit": {
+    "components": [
+      {
+        "id": "arduino",
+        "type": "arduino-uno",
+        "label": "Arduino Uno",
+        "x": 320,
+        "y": 64,
+        "config": {}
+      },
+      {
+        "id": "servo-zu1rt4l",
+        "type": "servo",
+        "label": "Servo Motor 1",
+        "x": 168,
+        "y": 240,
+        "config": {}
+      },
+      {
+        "id": "ultrasonic-fqwetvf",
+        "type": "ultrasonic",
+        "label": "HC-SR04 1",
+        "x": 560,
+        "y": 272,
+        "config": {
+          "distance": 14
+        }
+      }
+    ],
+    "connections": [
+      {
+        "id": "wire-o4fap3g",
+        "from": {
+          "componentId": "ultrasonic-fqwetvf",
+          "pin": "vcc"
+        },
+        "to": {
+          "componentId": "arduino",
+          "pin": "5V"
+        }
+      },
+      {
+        "id": "wire-lxj7uql",
+        "from": {
+          "componentId": "arduino",
+          "pin": "GND"
+        },
+        "to": {
+          "componentId": "ultrasonic-fqwetvf",
+          "pin": "gnd"
+        }
+      },
+      {
+        "id": "wire-gl641gp",
+        "from": {
+          "componentId": "ultrasonic-fqwetvf",
+          "pin": "trig"
+        },
+        "to": {
+          "componentId": "arduino",
+          "pin": "D9"
+        }
+      },
+      {
+        "id": "wire-yd80c8y",
+        "from": {
+          "componentId": "ultrasonic-fqwetvf",
+          "pin": "echo"
+        },
+        "to": {
+          "componentId": "arduino",
+          "pin": "D10"
+        }
+      },
+      {
+        "id": "wire-rcebxpf",
+        "from": {
+          "componentId": "servo-zu1rt4l",
+          "pin": "gnd"
+        },
+        "to": {
+          "componentId": "arduino",
+          "pin": "GND"
+        }
+      },
+      {
+        "id": "wire-0zvpn8y",
+        "from": {
+          "componentId": "servo-zu1rt4l",
+          "pin": "signal"
+        },
+        "to": {
+          "componentId": "arduino",
+          "pin": "D6"
+        }
+      },
+      {
+        "id": "wire-7gqpa0k",
+        "from": {
+          "componentId": "servo-zu1rt4l",
+          "pin": "vcc"
+        },
+        "to": {
+          "componentId": "arduino",
+          "pin": "5V"
+        }
+      }
+    ]
+  },
+  "code": "#include <Servo.h>\n\nconst int trigPin = 9;\nconst int echoPin = 10;\nconst int servoPin = 6;\nconst int arrivalThreshold = 10; // cm — \"arrived at point B\"\n\nServo gripper;\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  gripper.attach(servoPin);\n  gripper.write(90); // carrying position\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH);\n  long distance = duration / 58;\n\n  Serial.print(\"Distance: \");\n  Serial.println(distance);\n\n  if (distance < arrivalThreshold) {\n    gripper.write(0); // drop payload\n  } else {\n    gripper.write(90); // still carrying\n  }\n\n  delay(200);\n}",
+  "savedAt": 1791283950402
+}
